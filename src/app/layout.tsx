@@ -3,6 +3,7 @@ import { Header } from '@/components/navigation/Header'
 import { Footer } from '@/components/navigation/Footer'
 import { DesktopFooter } from '@/components/navigation/DesktopFooter'
 import './globals.css'
+import { Toaster } from '@/components/ui/toaster'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <main className="flex-grow pt-16 pb-20 md:pb-0">
           {children}
         </main>
+        <Toaster />
         <Footer />
         <DesktopFooter />
       </body>

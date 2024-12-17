@@ -1,0 +1,88 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id          String       @id @default(cuid())
+    wallet      String       @unique
+    name        String
+    title       String
+    location    String
+    price       String
+    description String
+    image       String
+    isMatch     Boolean      @default(false)
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+    experiences Experience[]
+    portfolio   Portfolio[]
+    pricing     Pricing?
+    reviews     Review[]
+    skills      UserSkill[]
+}
+
+model Skill {
+    id        String      @id @default(cuid())
+    name      String      @unique
+    users     UserSkill[]
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+}
+
+model UserSkill {
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    skill     Skill    @relation(fields: [skillId], references: [id])
+    skillId   String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@id([userId, skillId])
+}
+
+model Experience {
+    id        String   @id @default(cuid())
+    title     String
+    company   String
+    period    String
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Portfolio {
+    id        String   @id @default(cuid())
+    title     String
+    image     String
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Pricing {
+    id           String   @id @default(cuid())
+    hourlyRate   String
+    availability String
+    userId       String   @unique
+    user         User     @relation(fields: [userId], references: [id])
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+}
+
+model Review {
+    id        String   @id @default(cuid())
+    rating    Float
+    comment   String
+    author    String
+    userId    String
+    user      User     @relation(fields: [userId], references: [id])
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

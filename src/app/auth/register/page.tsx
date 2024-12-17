@@ -1,9 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { Eye, EyeOff, Wallet } from 'lucide-react'
+import { createUser } from "@/actions/user/write"
+import { Logo } from "@/components/Logo"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,20 +11,108 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Logo } from "@/components/Logo"
+import { useToast } from "@/hooks/use-toast"
+import { Wallet } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from "react"
 
 export default function RegisterPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const { toast } = useToast()
+  const [formData, setFormData] = useState({
+    wallet: "",
+    name: "",
+    title: "",
+    location: "",
+    price: "",
+    description: "",
+    image: "" // You might want to handle this separately with file upload
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    // Wallet address validation
+    if (!formData.wallet) {
+      newErrors.wallet = "Wallet address is required"
+    } else if (!/^0x[a-fA-F0-9]{40}$/.test(formData.wallet)) {
+      newErrors.wallet = "Invalid Ethereum wallet address"
+    }
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required"
+    } else if (formData.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
+    }
+
+    // Title validation
+    if (!formData.title.trim()) {
+      newErrors.title = "Professional title is required"
+    }
+
+    // Location validation
+    if (!formData.location.trim()) {
+      newErrors.location = "Location is required"
+    }
+
+    // Price validation
+    if (!formData.price) {
+      newErrors.price = "Price is required"
+    } else if (isNaN(Number(formData.price)) || Number(formData.price) < 0) {
+      newErrors.price = "Price must be a valid positive number"
+    }
+
+    // Description validation
+    if (!formData.description.trim()) {
+      newErrors.description = "Description is required"
+    } else if (formData.description.length < 20) {
+      newErrors.description = "Description must be at least 20 characters"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you would normally add logic to register the user
-    console.log("Registration with:", email, password)
-    // Redirect to profile page
-    router.push('/profile')
+    
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please check the form for errors",
+        className: "bg-red-500 text-white border-none",
+      })
+      return
+    }
+
+    try {
+      const user = await createUser(formData)
+      toast({
+        title: "User created",
+        description: "User created successfully",
+        className: "bg-green-500 text-white border-none",
+      })
+      console.log(user)
+      router.push('/profile')
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Error creating user",
+        className: "bg-red-500 text-white border-none",
+      })
+    }
   }
 
   return (
@@ -40,49 +126,101 @@ export default function RegisterPage() {
           </h2>
         </div>
 
-        {/* Form */}
+        {/* Updated Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-[#E0E0E0] text-sm">
-              Email
+            <Label htmlFor="wallet" className="text-[#E0E0E0] text-sm">
+              Wallet Address
             </Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="your@email.com"
-              className="bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA]"
+              id="wallet"
+              name="wallet"
+              type="text"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.wallet}
+              onChange={handleChange}
+              className={`bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA] ${
+                errors.wallet ? 'border-red-500' : ''
+              }`}
+            />
+            {errors.wallet && (
+              <p className="text-red-500 text-sm mt-1">{errors.wallet}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-[#E0E0E0] text-sm">
+              Full Name
+            </Label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              required
+              value={formData.name}
+              onChange={handleChange}
+              className="bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-[#E0E0E0] text-sm">
-              Password
+            <Label htmlFor="title" className="text-[#E0E0E0] text-sm">
+              Professional Title
             </Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Your password"
-                className="bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA] pr-10"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#AAAAAA]"
-              >
-                {showPassword ? (
-                  <EyeOff className="h-5 w-5" />
-                ) : (
-                  <Eye className="h-5 w-5" />
-                )}
-              </button>
-            </div>
+            <Input
+              id="title"
+              name="title"
+              type="text"
+              required
+              value={formData.title}
+              onChange={handleChange}
+              className="bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="location" className="text-[#E0E0E0] text-sm">
+              Location
+            </Label>
+            <Input
+              id="location"
+              name="location"
+              type="text"
+              required
+              value={formData.location}
+              onChange={handleChange}
+              className="bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="price" className="text-[#E0E0E0] text-sm">
+              Price
+            </Label>
+            <Input
+              id="price"
+              name="price"
+              type="text"
+              required
+              value={formData.price}
+              onChange={handleChange}
+              className="bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA]"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="description" className="text-[#E0E0E0] text-sm">
+              Description
+            </Label>
+            <Input
+              id="description"
+              name="description"
+              type="text"
+              required
+              value={formData.description}
+              onChange={handleChange}
+              className="bg-[#2A2533] border-[#333333] text-[#F5F5F5] placeholder-[#AAAAAA]"
+            />
           </div>
 
           <Button type="submit" className="w-full bg-[#9C27B0] hover:bg-[#7B1FA2] text-white">

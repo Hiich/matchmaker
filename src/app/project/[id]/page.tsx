@@ -8,6 +8,7 @@ type PageProps = {
 export default async function ProjectPage({ params }: PageProps) {
   const { id } = await params
 
+  
   return <ProjectDisplay projectId={id} />
 }
 
