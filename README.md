@@ -87,23 +87,162 @@ Follow these steps to get Matchmaker running on your computer:
 
 ## Project Structure 📁
 
-Here's how our project is organized:
+The project follows a well-organized structure to keep the code maintainable and scalable:
 
 ```
 matchmaker/
-├── app/                    # Main application code
-│   ├── layout.tsx         # Root layout (common elements across pages)
-│   ├── page.tsx           # Home page
-│   ├── (auth)/            # Authentication-related pages
-│   ├── (dashboard)/       # Dashboard and user features
-│   └── api/               # API routes
-├── components/            # Reusable React components
-│   ├── ui/               # Basic UI components (buttons, inputs, etc.)
-│   └── shared/           # Shared components (navbar, footer, etc.)
-├── lib/                  # Utility functions and configurations
-├── public/              # Static files (images, fonts, etc.)
-└── styles/             # Global styles and Tailwind config
+├── src/                   # Source directory containing all app code
+│   ├── app/              # Next.js 13+ App Router directory
+│   │   ├── auth/         # Authentication pages
+│   │   ├── celebration/  # Celebration/success pages
+│   │   ├── chat/        # Chat functionality and messaging
+│   │   ├── connections/ # User connections and networking
+│   │   ├── jobs/        # Job listings and applications
+│   │   ├── offer/       # Offer creation and management
+│   │   ├── profile/     # User profile pages and settings
+│   │   ├── project/     # Project creation and management
+│   │   ├── shop/        # Shop/marketplace features
+│   │   ├── swipe/       # Swipe/matching interface
+│   │   ├── layout.tsx   # Root layout with common UI elements
+│   │   ├── page.tsx     # Homepage
+│   │   └── globals.css  # Global styles
+│   │
+│   ├── components/      # Reusable React components
+│   │   ├── ui/         # Basic UI components (buttons, inputs, etc.)
+│   │   ├── navigation/ # Navigation components
+│   │   ├── HeroSection.tsx
+│   │   ├── Logo.tsx
+│   │   ├── OpportunityCard.tsx
+│   │   ├── review-stars.tsx
+│   │   └── skill-badges.tsx
+│   │
+│   ├── data/          # Data utilities and constants
+│   └── lib/           # Shared utilities and configurations
+│
+├── public/            # Static assets (images, icons)
+├── node_modules/      # Project dependencies
+└── config files       # Various configuration files
 ```
+
+### Page Structure and Routes 🗺️
+
+1. **Authentication (`/auth`)**
+   - Sign in
+   - Sign up
+   - Password recovery
+
+2. **Profile Management (`/profile`)**
+   - View profile
+   - Edit profile
+   - Settings
+   - Preferences
+
+3. **Chat System (`/chat`)**
+   - Message inbox
+   - Conversation view
+   - Chat settings
+
+4. **Connections (`/connections`)**
+   - View connections
+   - Connection requests
+   - Network management
+
+5. **Jobs (`/jobs`)**
+   - Job listings
+   - Job applications
+   - Job posting
+
+6. **Offers (`/offer`)**
+   - Create offers
+   - View offers
+   - Manage offers
+
+7. **Projects (`/project`)**
+   - Project creation
+   - Project details
+   - Project management
+
+8. **Shop (`/shop`)**
+   - Product listings
+   - Shopping cart
+   - Purchase history
+
+9. **Swipe Interface (`/swipe`)**
+   - Match suggestions
+   - Swipe cards
+   - Match preferences
+
+10. **Celebration (`/celebration`)**
+    - Success pages
+    - Achievement notifications
+
+### Component Organization 🧩
+
+1. **UI Components (`/components/ui`)**
+   - Buttons
+   - Input fields
+   - Cards
+   - Modals
+   - Loading states
+   - Form elements
+
+2. **Navigation Components (`/components/navigation`)**
+   - Navigation bar
+   - Sidebar
+   - Footer
+   - Menu items
+   - Breadcrumbs
+
+3. **Shared Components**
+   - `HeroSection.tsx` - Landing page hero section
+   - `Logo.tsx` - App logo component
+   - `OpportunityCard.tsx` - Card for displaying opportunities
+   - `review-stars.tsx` - Rating display component
+   - `skill-badges.tsx` - Skill tag/badge component
+
+### Configuration Files ⚙️
+
+- `next.config.ts` - Next.js configuration
+- `tailwind.config.ts` - Tailwind CSS configuration
+- `tsconfig.json` - TypeScript configuration
+- `package.json` - Project dependencies and scripts
+- `components.json` - UI component configurations
+
+### Key Directories 📂
+
+1. **`src/app`**
+   - Contains all pages and routes
+   - Each directory represents a route
+   - Uses Next.js 13+ App Router conventions
+
+2. **`src/components`**
+   - Reusable UI components
+   - Follows atomic design principles
+   - Component-specific styles
+
+3. **`src/lib`**
+   - Utility functions
+   - Helper methods
+   - Custom hooks
+   - Type definitions
+
+4. **`src/data`**
+   - Data models
+   - Constants
+   - Mock data for development
+
+5. **`public`**
+   - Static assets
+   - Images
+   - Fonts
+   - Icons
+
+### File Naming Conventions 📝
+
+- React components: PascalCase (e.g., `ButtonComponent.tsx`)
+- Utilities and hooks: camelCase (e.g., `useAuth.ts`)
+- Pages: lowercase with hyphens (e.g., `user-profile.tsx`)
+- Constants: UPPERCASE (e.g., `CONSTANTS.ts`)
 
 ## Development Guide 💻
 
